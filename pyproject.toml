@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "telegramalwaysonline"
+version = "0.0.1"
+description = "Are TG premium useres able to see your last online? With telegram-always-online they won't."
+authors = ["upupa <fbutko@proton.me>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Telethon = "^1.33.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.4"
+black = "^24.1.0"
+mypy = "^1.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[mypy]
+warn_return_any = true
+warn_unused_configs = true

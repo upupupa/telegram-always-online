@@ -1,0 +1,37 @@
+## BASE STAGE
+FROM python:3.11.7-alpine3.19 as base
+
+ENV PYTHONUNBUFFERED=1
+ENV USERNAME=runner
+ENV USER_HOME=/home/${USERNAME}
+ENV PROJECT_ROOT=${USER_HOME}/telegramalwaysonline
+ENV POETRY_PATH=${USER_HOME}/.local/bin
+
+RUN addgroup -S runner && adduser -S runner -G runner
+USER $USERNAME
+WORKDIR $USER_HOME
+RUN mkdir -p $PROJECT_ROOT
+
+## BUILDER STAGE
+FROM base as builder
+
+ENV POETRYVERSION=1.7.1
+WORKDIR ${USER_HOME}
+
+RUN pip install --no-cache --user "poetry==$POETRYVERSION"
+COPY pyproject.toml poetry.lock ${USER_HOME}/
+RUN ${POETRY_PATH}/poetry install --with dev --no-root
+
+## FINAL STAGE
+FROM base as final
+WORKDIR ${USER_HOME}
+
+COPY --from=builder ${USER_HOME} ${USER_HOME}
+COPY app $PROJECT_ROOT/
+COPY README.md ${USER_HOME}/README.md
+
+RUN ${POETRY_PATH}/poetry run black ./telegramalwaysonline
+RUN ${POETRY_PATH}/poetry run mypy ./telegramalwaysonline
+
+CMD ["echo", "All done! 🎉"]
+
