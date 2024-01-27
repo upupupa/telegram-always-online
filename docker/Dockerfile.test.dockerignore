@@ -1,0 +1,9 @@
+# Python project related files
+.python-version
+pyrightconfig.json
+.mypy_cache*
+
+# Git
+.gitignore
+.git*
+.github*

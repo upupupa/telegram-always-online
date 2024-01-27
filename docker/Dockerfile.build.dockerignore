@@ -1,0 +1,16 @@
+# Dockerfiles
+# docker*
+
+# Exclude tests from production image
+**/test*
+**/conftest.py
+
+# Python project related files
+.python-version
+pyrightconfig.json
+.mypy_cache*
+
+# Git
+.gitignore
+.git*
+.github*
