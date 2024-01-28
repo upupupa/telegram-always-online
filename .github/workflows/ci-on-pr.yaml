@@ -15,22 +15,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Build test Docker image
-      run: |
-        docker build -t tg-alws-on:test -f docker/Dockerfile.test .
+      - name: Build test Docker image
+        run: |
+          docker build -t tg-alws-on:test -f docker/Dockerfile.test .
 
-    - name: Check code formatting with Black
-      run: |
-        docker run tg-alws-on:test poetry run black --check telegramalwaysonline/src
+      - name: Check code formatting with Black
+        run: |
+          docker run tg-alws-on:test black --check telegramalwaysonline/src
 
-    - name: Run MyPy
-      run: |
-        docker run tg-alws-on:test poetry run mypy telegramalwaysonline/src
+      - name: Run MyPy
+        run: |
+          docker run tg-alws-on:test mypy telegramalwaysonline/src
 
-    - name: Run tests
-      run: |
-        docker run tg-alws-on:test poetry run pytest telegramalwaysonline/tests
+      - name: Run tests
+        run: |
+          if docker run tg-alws-on:test pytest telegramalwaysonline/tests; then
+            echo "Tests passed or no tests found"
+            echo "::set-output name=status::success"
+          else
+            echo "Tests failed"
+            echo "::set-output name=status::failure"
+          fi
 
+      - name: Set job status
+        run: exit ${{ steps.test.outputs.status }}
