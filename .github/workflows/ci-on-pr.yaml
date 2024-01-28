@@ -31,14 +31,4 @@ jobs:
           docker run tg-alws-on:test mypy telegramalwaysonline/src
 
       - name: Run tests
-        run: |
-          if docker run tg-alws-on:test pytest telegramalwaysonline/tests; then
-            echo "Tests passed or no tests found"
-            echo "::set-output name=status::success"
-          else
-            echo "Tests failed"
-            echo "::set-output name=status::failure"
-          fi
-
-      - name: Set job status
-        run: exit ${{ steps.test.outputs.status }}
+        run: docker run tg-alws-on:test pytest -p no:cacheprovider telegramalwaysonline/tests
