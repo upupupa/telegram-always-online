@@ -1,0 +1,34 @@
+name: CI On PR
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+  pull_request:
+    branches:
+      - dev
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build test Docker image
+        run: |
+          docker build -t tg-alws-on:test -f docker/Dockerfile.test .
+
+      - name: Check code formatting with Black
+        run: |
+          docker run tg-alws-on:test black --check telegramalwaysonline/src
+
+      - name: Run MyPy
+        run: |
+          docker run tg-alws-on:test mypy telegramalwaysonline/src
+
+      - name: Run tests
+        run: docker run tg-alws-on:test pytest -p no:cacheprovider telegramalwaysonline/tests
