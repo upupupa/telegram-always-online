@@ -17,10 +17,11 @@ FROM base as builder
 
 ENV POETRYVERSION=1.7.1
 WORKDIR ${USER_HOME}
+ENV PATH=${POETRY_PATH}:$PATH
 
 RUN pip install --no-cache --user "poetry==$POETRYVERSION"
 COPY pyproject.toml poetry.lock ${USER_HOME}/
-RUN ${POETRY_PATH}/poetry install --with dev --no-root
+RUN poetry install --with dev --no-root
 
 ## FINAL STAGE
 FROM base as final
@@ -30,6 +31,5 @@ COPY --from=builder ${USER_HOME} ${USER_HOME}
 COPY app $PROJECT_ROOT/
 COPY README.md ${USER_HOME}/README.md
 
-RUN ${POETRY_PATH}/poetry run pytest telegramalwaysonline/tests
-
-CMD ["echo", "All done! 🎉"]
+ENTRYPOINT ["poetry", "run"]
+CMD ["echo", "'Pass a command to run with poetry... 👾'"]
