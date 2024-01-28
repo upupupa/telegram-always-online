@@ -6,6 +6,7 @@ ENV USERNAME=runner
 ENV USER_HOME=/home/${USERNAME}
 ENV PROJECT_ROOT=${USER_HOME}/telegramalwaysonline
 ENV POETRY_PATH=${USER_HOME}/.local/bin
+ENV PATH=${POETRY_PATH}:$PATH
 
 RUN addgroup -S runner && adduser -S runner -G runner
 USER $USERNAME
@@ -20,7 +21,7 @@ WORKDIR ${USER_HOME}
 
 RUN pip install --no-cache --user "poetry==$POETRYVERSION"
 COPY pyproject.toml poetry.lock ${USER_HOME}/
-RUN ${POETRY_PATH}/poetry install --with dev --no-root
+RUN poetry install --with dev --no-root
 
 ## FINAL STAGE
 FROM base as final
@@ -30,6 +31,5 @@ COPY --from=builder ${USER_HOME} ${USER_HOME}
 COPY app $PROJECT_ROOT/
 COPY README.md ${USER_HOME}/README.md
 
-RUN ${POETRY_PATH}/poetry run pytest telegramalwaysonline/tests
-
-CMD ["echo", "All done! 🎉"]
+ENTRYPOINT ["poetry", "run"]
+CMD ["echo", "Pass the command to run it with poetry... 👾"]
