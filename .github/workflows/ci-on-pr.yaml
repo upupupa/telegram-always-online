@@ -1,7 +1,7 @@
 name: CI On PR
 
 on:
-  push
+  push:
     branches:
       - dev
       - main
